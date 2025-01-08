@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
   } else {
     cb(
       new Error(
-        "file type tidak valid, masukkan data dengan eksistensi jpg, png, dan jpeg"
+        "file type not valid, enter data with eksistensi jpg, png, dan jpeg"
       )
     );
   }

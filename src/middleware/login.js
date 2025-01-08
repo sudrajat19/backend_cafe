@@ -24,7 +24,7 @@ const login = async function (req, res) {
     }
 
     const token = jwt.sign({ id: outlet.id }, config.secret, {
-      expiresIn: "15m",
+      expiresIn: "1h",
     });
     const refreshToken = jwt.sign({ id: outlet.id }, config.refreshSecret, {
       expiresIn: "7d",
