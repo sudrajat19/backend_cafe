@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.get("/showbyidoutlet/:id", getGalleryByIdOutlet);
 router.get("/showcafename/:outlet_name", getGalleryByCafeName);
-router.get("/show/:id", getPaginatedGallery);
+router.get("/show", getPaginatedGallery);
 router.get("/show/:id", getGalleryById);
 router.post("/create", upload.single("image"), verifikasi, createGallery);
 router.put("/update/:id", upload.single("image"), verifikasi, updateGallery);

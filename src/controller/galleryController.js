@@ -4,11 +4,11 @@ import sequelize from "../db/config/db.js";
 import { QueryTypes } from "sequelize";
 
 export const getPaginatedGallery = async (req, res) => {
+  const outlet_name = req.query.outlet_name;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
-  const id = req.params.id;
   console.log(search);
 
   try {
@@ -16,12 +16,12 @@ export const getPaginatedGallery = async (req, res) => {
       `SELECT *
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
-       WHERE galleries.title LIKE :search
-       AND outlet.id = :id
+      WHERE outlets.outlet_name = :outlet_name
+        AND (galleries.title LIKE :search )
        LIMIT :limit OFFSET :offset`,
       {
         type: QueryTypes.SELECT,
-        replacements: { limit, offset, search: `%${search}%`, id },
+        replacements: { limit, offset, search: `%${search}%`, outlet_name },
       }
     );
 
@@ -29,11 +29,11 @@ export const getPaginatedGallery = async (req, res) => {
       `SELECT *
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
-       WHERE galleries.title LIKE :search
-       AND outlets.id = :id`,
+       WHERE outlets.outlet_name = :outlet_name
+        AND (galleries.title LIKE :search )`,
       {
         type: QueryTypes.SELECT,
-        replacements: { search: `%${search}%`, id },
+        replacements: { search: `%${search}%`, outlet_name },
       }
     );
 

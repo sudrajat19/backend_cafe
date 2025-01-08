@@ -4,6 +4,7 @@ import { QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
 
 export const getPaginatedProfile = async (req, res) => {
+  const outlet_name = req.query.outlet_name;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
@@ -15,11 +16,12 @@ export const getPaginatedProfile = async (req, res) => {
       `SELECT *
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
-       WHERE profiles.cafe_name LIKE :search
+       WHERE outlets.outlet_name = :outlet_name
+        AND (profiles.cafe_name LIKE :search )
        LIMIT :limit OFFSET :offset`,
       {
         type: QueryTypes.SELECT,
-        replacements: { limit, offset, search: `%${search}%` },
+        replacements: { limit, offset, search: `%${search}%`, outlet_name },
       }
     );
 
@@ -27,10 +29,11 @@ export const getPaginatedProfile = async (req, res) => {
       `SELECT *
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
-       WHERE profiles.cafe_name LIKE :search`,
+       WHERE outlets.outlet_name = :outlet_name
+        AND (profiles.cafe_name LIKE :search )`,
       {
         type: QueryTypes.SELECT,
-        replacements: { search: `%${search}%` },
+        replacements: { search: `%${search}%`, outlet_name },
       }
     );
 

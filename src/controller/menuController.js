@@ -48,44 +48,65 @@ export const getMenuByIdOutlet = async (req, res) => {
   }
 };
 export const getPaginatedMenu = async (req, res) => {
-  // const outlet_name = req.query.outlet_name;
+  const outlet_name = req.query.outlet_name;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
-  console.log(search);
+
+  console.log(`Search Query: ${search}, Outlet Name: ${outlet_name}`);
+
+  if (!outlet_name) {
+    return res.status(400).json({ error: "Outlet name is required." });
+  }
 
   try {
-    const menu = await sequelize.query(
-      `SELECT *
-       FROM menus  
-       JOIN subcategories ON menus.id_subcategory = subcategories.id
-       JOIN categories ON subcategories.id_category = categories.id 
-       JOIN outlets ON categories.id_outlet = outlets.id
-       WHERE menus.title LIKE :search OR subcategories.title LIKE :search OR categories.type LIKE :search
-       LIMIT :limit OFFSET :offset`,
+    // Query to fetch paginated menu
+    const [menu] = await sequelize.query(
+      `
+      SELECT menus.*, 
+             subcategories.title AS subcategory_title,
+             categories.type AS category_type,
+             outlets.outlet_name
+      FROM menus  
+      JOIN subcategories ON menus.id_subcategory = subcategories.id
+      JOIN categories ON subcategories.id_category = categories.id 
+      JOIN outlets ON categories.id_outlet = outlets.id
+      WHERE outlets.outlet_name = :outlet_name
+        AND (menus.title LIKE :search 
+             OR subcategories.title LIKE :search 
+             OR categories.type LIKE :search)
+      LIMIT :limit OFFSET :offset
+      `,
       {
         type: QueryTypes.SELECT,
-        replacements: { limit, offset, search: `%${search}%` },
+        replacements: { outlet_name, search: `%${search}%`, limit, offset },
       }
     );
 
-    const totalItems = await sequelize.query(
-      `SELECT *
-       FROM menus  
-       JOIN subcategories ON menus.id_subcategory = subcategories.id
-       JOIN categories ON subcategories.id_category = categories.id 
-       JOIN outlets ON categories.id_outlet = outlets.id
-       WHERE menus.title LIKE :search OR subcategories.title LIKE :search OR categories.type LIKE :search`,
+    // Query to count total items
+    const [totalItemsResult] = await sequelize.query(
+      `
+      SELECT COUNT(*) AS totalCount
+      FROM menus  
+      JOIN subcategories ON menus.id_subcategory = subcategories.id
+      JOIN categories ON subcategories.id_category = categories.id 
+      JOIN outlets ON categories.id_outlet = outlets.id
+      WHERE outlets.outlet_name = :outlet_name
+        AND (menus.title LIKE :search 
+             OR subcategories.title LIKE :search 
+             OR categories.type LIKE :search)
+      `,
       {
         type: QueryTypes.SELECT,
-        replacements: { search: `%${search}%` },
+        replacements: { outlet_name, search: `%${search}%` },
       }
     );
 
-    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
+    const totalCount = totalItemsResult.totalCount || 0;
     const totalPages = Math.ceil(totalCount / limit);
-    console.log(totalItems.length, "cek count");
+
+    console.log(`Total Items: ${totalCount}, Total Pages: ${totalPages}`);
 
     res.json({
       totalItems: totalCount,
@@ -95,7 +116,9 @@ export const getPaginatedMenu = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching menu:", error);
-    res.status(500).send({ error: "An error occurred while fetching menu." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the menu." });
   }
 };
 
