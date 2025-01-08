@@ -1,6 +1,28 @@
 import fs from "fs";
-import { contactControl } from "../models/index.js";
+import { contactControl, outletControl } from "../models/index.js";
+export const getContactByNameCafe = async (req, res) => {
+  try {
+    const respon = await contactControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            outlet_name: req.params.outlet_name,
+          },
+        },
+      ],
+    });
 
+    if (!respon) {
+      return res.status(401).json({ massage: "outlet is not found!" });
+    } else {
+      res.status(200).json(respon);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 export const getContact = async (req, res) => {
   try {
     const data = await contactControl.findAll();

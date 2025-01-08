@@ -1,6 +1,29 @@
 import fs from "fs";
-import { eventControl } from "../models/index.js";
+import { eventControl, outletControl } from "../models/index.js";
 
+export const getEventByNameCafe = async (req, res) => {
+  try {
+    const respon = await eventControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            outlet_name: req.params.outlet_name,
+          },
+        },
+      ],
+    });
+
+    if (!respon) {
+      return res.status(401).json({ massage: "outlet is not found!" });
+    } else {
+      res.status(200).json(respon);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 export const getEvent = async (req, res) => {
   try {
     const data = await eventControl.findAll();

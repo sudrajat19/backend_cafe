@@ -1,12 +1,54 @@
 import fs from "fs";
 import { galleryControll } from "../models/index.js";
+import sequelize from "../db/config/db.js";
+import { QueryTypes } from "sequelize";
 
-export const getGallery = async (req, res) => {
+export const getPaginatedGallery = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+  console.log(search);
+
   try {
-    const data = await galleryControll.findAll();
-    res.send(data);
+    const gallery = await sequelize.query(
+      `SELECT *
+       FROM galleries
+       JOIN outlets ON galleries.id_outlet = outlets.id
+       WHERE galleries.title LIKE :search
+       LIMIT :limit OFFSET :offset`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { limit, offset, search: `%${search}%` },
+      }
+    );
+
+    const totalItems = await sequelize.query(
+      `SELECT *
+       FROM galleries
+       JOIN outlets ON galleries.id_outlet = outlets.id
+       WHERE galleries.title LIKE :search`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { search: `%${search}%` },
+      }
+    );
+
+    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
+    const totalPages = Math.ceil(totalCount / limit);
+    console.log(totalItems.length, "cek count");
+
+    res.json({
+      totalItems: totalCount,
+      totalPages,
+      currentPage: page,
+      gallery: gallery || [],
+    });
   } catch (error) {
-    res.status(400).send(error.message);
+    console.error("Error fetching gallery:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching gallery." });
   }
 };
 

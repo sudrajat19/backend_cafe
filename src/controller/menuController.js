@@ -1,12 +1,56 @@
 import fs from "fs";
 import { menuControl } from "../models/index.js";
+import sequelize from "../db/config/db.js";
+import { QueryTypes } from "sequelize";
 
-export const getMenu = async (req, res) => {
+export const getPaginatedMenu = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+  console.log(search);
+
   try {
-    const data = await menuControl.findAll();
-    res.send(data);
+    const menu = await sequelize.query(
+      `SELECT *
+       FROM menus  
+       JOIN subcategories ON menus.id_subcategory = subcategories.id
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE menus.title LIKE :search OR subcategories.title LIKE :search OR categories.type LIKE :search
+       LIMIT :limit OFFSET :offset`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { limit, offset, search: `%${search}%` },
+      }
+    );
+
+    const totalItems = await sequelize.query(
+      `SELECT *
+       FROM menus  
+       JOIN subcategories ON menus.id_subcategory = subcategories.id
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE menus.title LIKE :search OR subcategories.title LIKE :search OR categories.type LIKE :search`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { search: `%${search}%` },
+      }
+    );
+
+    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
+    const totalPages = Math.ceil(totalCount / limit);
+    console.log(totalItems.length, "cek count");
+
+    res.json({
+      totalItems: totalCount,
+      totalPages,
+      currentPage: page,
+      menu: menu || [],
+    });
   } catch (error) {
-    res.status(400).send(error.message);
+    console.error("Error fetching menu:", error);
+    res.status(500).send({ error: "An error occurred while fetching menu." });
   }
 };
 

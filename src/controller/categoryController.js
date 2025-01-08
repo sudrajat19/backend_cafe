@@ -1,6 +1,29 @@
 import fs from "fs";
-import { categoryControl } from "../models/index.js";
+import { categoryControl, outletControl } from "../models/index.js";
 
+export const getCategoryByNameCafe = async (req, res) => {
+  try {
+    const respon = await categoryControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            outlet_name: req.params.outlet_name,
+          },
+        },
+      ],
+    });
+
+    if (!respon) {
+      return res.status(401).json({ massage: "outlet is not found!" });
+    } else {
+      res.status(200).json(respon);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 export const getCategory = async (req, res) => {
   try {
     const data = await categoryControl.findAll();

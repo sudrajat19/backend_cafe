@@ -1,6 +1,56 @@
 import fs from "fs";
 import { profileControl } from "../models/index.js";
+import { QueryTypes } from "sequelize";
+import sequelize from "../db/config/db.js";
 
+export const getPaginatedProfile = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+  console.log(search);
+
+  try {
+    const proflie = await sequelize.query(
+      `SELECT *
+       FROM profiles
+       JOIN outlets ON profiles.id_outlet = outlets.id
+       WHERE profiles.cafe_name LIKE :search
+       LIMIT :limit OFFSET :offset`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { limit, offset, search: `%${search}%` },
+      }
+    );
+
+    const totalItems = await sequelize.query(
+      `SELECT *
+       FROM profiles
+       JOIN outlets ON profiles.id_outlet = outlets.id
+       WHERE profiles.cafe_name LIKE :search`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { search: `%${search}%` },
+      }
+    );
+
+    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
+    const totalPages = Math.ceil(totalCount / limit);
+    console.log(totalItems.length, "cek count");
+
+    res.json({
+      totalItems: totalCount,
+      totalPages,
+      currentPage: page,
+      proflie: proflie || [],
+    });
+  } catch (error) {
+    console.error("Error fetching proflie:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching proflie." });
+  }
+};
 export const getProfile = async (req, res) => {
   try {
     const data = await profileControl.findAll();

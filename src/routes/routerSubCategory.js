@@ -11,6 +11,7 @@ import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showcafename/:outlet_name", getSubCategory);
 router.get("/show", getSubCategory);
 router.get("/show/:id", getSubCategoryById);
 router.post("/create", upload.single("photo"), verifikasi, createSubCategory);

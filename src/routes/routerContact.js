@@ -5,12 +5,14 @@ import {
   deleteContact,
   getContact,
   getContactById,
+  getContactByNameCafe,
   updateContact,
 } from "../controller/contactController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showcafename/:outlet_name", getContactByNameCafe);
 router.get("/show", getContact);
 router.get("/show/:id", getContactById);
 router.post("/create", upload.single("logo"), verifikasi, createContact);

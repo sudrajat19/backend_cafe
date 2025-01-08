@@ -3,15 +3,15 @@ import upload from "../../upload.js";
 import {
   createMenu,
   deleteMenu,
-  getMenu,
   getMenuById,
+  getPaginatedMenu,
   updateMenu,
 } from "../controller/menuController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
-router.get("/show", getMenu);
+router.get("/show", getPaginatedMenu);
 router.get("/show/:id", getMenuById);
 router.post("/create", upload.single("photo"), verifikasi, createMenu);
 router.put("/update/:id", upload.single("photo"), verifikasi, updateMenu);

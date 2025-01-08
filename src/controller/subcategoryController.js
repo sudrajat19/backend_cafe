@@ -1,6 +1,29 @@
 import fs from "fs";
-import { subCategoryControl } from "../models/index.js";
+import { outletControl, subCategoryControl } from "../models/index.js";
 
+export const getSubCategoryByNameCafe = async (req, res) => {
+  try {
+    const respon = await subCategoryControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            outlet_name: req.params.outlet_name,
+          },
+        },
+      ],
+    });
+
+    if (!respon) {
+      return res.status(401).json({ massage: "outlet is not found!" });
+    } else {
+      res.status(200).json(respon);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 export const getSubCategory = async (req, res) => {
   try {
     const data = await subCategoryControl.findAll();
