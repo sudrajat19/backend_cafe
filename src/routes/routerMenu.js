@@ -3,6 +3,7 @@ import upload from "../../upload.js";
 import {
   createMenu,
   deleteMenu,
+  getMenuBestSeller,
   getMenuByCafeName,
   getMenuById,
   getMenuByIdOutlet,
@@ -13,6 +14,7 @@ import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showbestseller/:best_seller", getMenuBestSeller);
 router.get("/showbyidoutlet/:id", getMenuByIdOutlet);
 router.get("/showcafename/:outlet_name", getMenuByCafeName);
 router.get("/show", getPaginatedMenu);

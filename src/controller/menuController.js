@@ -3,6 +3,28 @@ import { menuControl } from "../models/index.js";
 import sequelize from "../db/config/db.js";
 import { QueryTypes } from "sequelize";
 
+export const getMenuBestSeller = async (req, res) => {
+  const best_seller = req.params.best_seller;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT menus.*,outlets.outlet_name, outlets.email, outlets.role
+       FROM menus  
+       JOIN subcategories ON menus.id_subcategory = subcategories.id
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE menus.best_seller = :best_seller
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { best_seller },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getMenuByCafeName = async (req, res) => {
   const outlet_name = req.params.outlet_name;
   try {
