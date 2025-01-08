@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/show", getOutletAll);
 router.get("/show/:id", getOutletAllById);
 router.get("/showall", getAllByIdOutlet);
-router.post("/create", verifikasi, createOutlet);
+router.post("/create", createOutlet);
 router.put("/update/:id", verifikasi, updateOutlet);
 router.delete("/delete/:id", verifikasi, deleteOutletById);
 
