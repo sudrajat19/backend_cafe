@@ -8,7 +8,7 @@ export const getMenuByCafeName = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT menus.*,outlets.outlet_name, outlets.email, outlets.role
        FROM menus  
        JOIN subcategories ON menus.id_subcategory = subcategories.id
        JOIN categories ON subcategories.id_category = categories.id 
@@ -30,7 +30,7 @@ export const getMenuByIdOutlet = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT menus.*,outlets.outlet_name, outlets.email, outlets.role
        FROM menus  
        JOIN subcategories ON menus.id_subcategory = subcategories.id
        JOIN categories ON subcategories.id_category = categories.id 
@@ -61,8 +61,7 @@ export const getPaginatedMenu = async (req, res) => {
   }
 
   try {
-    // Query to fetch paginated menu
-    const [menu] = await sequelize.query(
+    const menu = await sequelize.query(
       `
       SELECT menus.*, 
              subcategories.title AS subcategory_title,
@@ -85,7 +84,7 @@ export const getPaginatedMenu = async (req, res) => {
     );
 
     // Query to count total items
-    const [totalItemsResult] = await sequelize.query(
+    const totalItemsResult = await sequelize.query(
       `
       SELECT COUNT(*) AS totalCount
       FROM menus  

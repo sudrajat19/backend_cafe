@@ -13,7 +13,7 @@ export const getPaginatedProfile = async (req, res) => {
 
   try {
     const proflie = await sequelize.query(
-      `SELECT *
+      `SELECT profiles.*,outlets.outlet_name, outlets.email, outlets.role
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
        WHERE outlets.outlet_name = :outlet_name
@@ -26,7 +26,7 @@ export const getPaginatedProfile = async (req, res) => {
     );
 
     const totalItems = await sequelize.query(
-      `SELECT *
+      `SELECT profiles.*,outlets.outlet_name, outlets.email, outlets.role
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
        WHERE outlets.outlet_name = :outlet_name

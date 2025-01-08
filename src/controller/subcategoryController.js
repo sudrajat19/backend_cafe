@@ -29,7 +29,7 @@ export const getSubCategoryByIdOutlet = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-    SELECT *
+    SELECT subcategories.*,outlets.outlet_name, outlets.email, outlets.role
        FROM subcategories  
        JOIN categories ON subcategories.id_category = categories.id 
        JOIN outlets ON categories.id_outlet = outlets.id
