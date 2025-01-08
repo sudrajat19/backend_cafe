@@ -5,13 +5,16 @@ import {
   deleteSubCategory,
   getSubCategory,
   getSubCategoryById,
+  getSubCategoryByIdOutlet,
+  getSubCategoryByNameCafe,
   updateSubCategory,
 } from "../controller/subcategoryController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
-router.get("/showcafename/:outlet_name", getSubCategory);
+router.get("/showcafename/:outlet_name", getSubCategoryByNameCafe);
+router.get("/showbyidoutlet/:id", getSubCategoryByIdOutlet);
 router.get("/show", getSubCategory);
 router.get("/show/:id", getSubCategoryById);
 router.post("/create", upload.single("photo"), verifikasi, createSubCategory);

@@ -8,6 +8,7 @@ export const getPaginatedGallery = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
+  const id = req.params.id;
   console.log(search);
 
   try {
@@ -16,10 +17,11 @@ export const getPaginatedGallery = async (req, res) => {
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
        WHERE galleries.title LIKE :search
+       AND outlet.id = :id
        LIMIT :limit OFFSET :offset`,
       {
         type: QueryTypes.SELECT,
-        replacements: { limit, offset, search: `%${search}%` },
+        replacements: { limit, offset, search: `%${search}%`, id },
       }
     );
 
@@ -27,10 +29,11 @@ export const getPaginatedGallery = async (req, res) => {
       `SELECT *
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
-       WHERE galleries.title LIKE :search`,
+       WHERE galleries.title LIKE :search
+       AND outlets.id = :id`,
       {
         type: QueryTypes.SELECT,
-        replacements: { search: `%${search}%` },
+        replacements: { search: `%${search}%`, id },
       }
     );
 
@@ -52,6 +55,46 @@ export const getPaginatedGallery = async (req, res) => {
   }
 };
 
+export const getGalleryByCafeName = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM galleries
+       JOIN outlets ON galleries.id_outlet = outlets.id
+       WHERE outlets.outlet_name = :outlet_name
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { outlet_name },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+export const getGalleryByIdOutlet = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM galleries
+       JOIN outlets ON galleries.id_outlet = outlets.id
+       WHERE outlets.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getGalleryById = async (req, res) => {
   const id = req.params.id;
   try {

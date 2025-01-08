@@ -5,6 +5,7 @@ import {
   deleteContact,
   getContact,
   getContactById,
+  getContactByIdOutlet,
   getContactByNameCafe,
   updateContact,
 } from "../controller/contactController.js";
@@ -12,6 +13,7 @@ import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showbyidoutlet/:id", getContactByIdOutlet);
 router.get("/showcafename/:outlet_name", getContactByNameCafe);
 router.get("/show", getContact);
 router.get("/show/:id", getContactById);

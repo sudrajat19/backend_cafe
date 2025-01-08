@@ -5,6 +5,8 @@ import {
   deleteProfile,
   getPaginatedProfile,
   getProfile,
+  getProfileByCafeName,
+  getProfileByIdOutlet,
   updateProfile,
 } from "../controller/profileController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
@@ -12,6 +14,8 @@ import { verifikasi } from "../middleware/verifikasi.js";
 const router = express.Router();
 
 router.get("/showpaginated", getPaginatedProfile);
+router.get("/showbyidoutlet/:id", getProfileByIdOutlet);
+router.get("/showcafename/:outlet_name", getProfileByCafeName);
 router.get("/show", getProfile);
 router.get("/show/:id", getProfile);
 router.post("/create", upload.single("logo"), verifikasi, createProfile);

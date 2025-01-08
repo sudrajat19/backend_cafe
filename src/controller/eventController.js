@@ -24,6 +24,29 @@ export const getEventByNameCafe = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+export const getEventByIdOutlet = async (req, res) => {
+  try {
+    const respon = await eventControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            id: req.params.id,
+          },
+        },
+      ],
+    });
+
+    if (!respon) {
+      return res.status(401).json({ massage: "outlet is not found!" });
+    } else {
+      res.status(200).json(respon);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 export const getEvent = async (req, res) => {
   try {
     const data = await eventControl.findAll();

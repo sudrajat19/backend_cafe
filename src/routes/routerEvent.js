@@ -5,12 +5,14 @@ import {
   deleteEvent,
   getEvent,
   getEventById,
+  getEventByIdOutlet,
   updateEvent,
 } from "../controller/eventController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showbyidoutlet/:id", getEventByIdOutlet);
 router.get("/showcafename/:outlet_name", getEvent);
 router.get("/show", getEvent);
 router.get("/show/:id", getEventById);

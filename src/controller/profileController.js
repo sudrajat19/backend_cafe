@@ -51,6 +51,47 @@ export const getPaginatedProfile = async (req, res) => {
       .send({ error: "An error occurred while fetching proflie." });
   }
 };
+
+export const getProfileByCafeName = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM profiles
+       JOIN outlets ON profiles.id_outlet = outlets.id
+       WHERE outlets.outlet_name = :outlet_name
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { outlet_name },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+export const getProfileByIdOutlet = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM profiles
+       JOIN outlets ON profiles.id_outlet = outlets.id
+       WHERE outlets.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getProfile = async (req, res) => {
   try {
     const data = await profileControl.findAll();

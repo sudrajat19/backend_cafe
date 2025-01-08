@@ -3,7 +3,52 @@ import { menuControl } from "../models/index.js";
 import sequelize from "../db/config/db.js";
 import { QueryTypes } from "sequelize";
 
+export const getMenuByCafeName = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM menus  
+       JOIN subcategories ON menus.id_subcategory = subcategories.id
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE outlets.outlet_name = :outlet_name
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { outlet_name },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+export const getMenuByIdOutlet = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT *
+       FROM menus  
+       JOIN subcategories ON menus.id_subcategory = subcategories.id
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE outlets.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getPaginatedMenu = async (req, res) => {
+  // const outlet_name = req.query.outlet_name;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;

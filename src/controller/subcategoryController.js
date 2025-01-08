@@ -1,27 +1,48 @@
 import fs from "fs";
-import { outletControl, subCategoryControl } from "../models/index.js";
+import { subCategoryControl } from "../models/index.js";
+import { QueryTypes } from "sequelize";
+import sequelize from "../db/config/db.js";
 
 export const getSubCategoryByNameCafe = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
   try {
-    const respon = await subCategoryControl.findAll({
-      include: [
-        {
-          model: outletControl,
-          required: false,
-          where: {
-            outlet_name: req.params.outlet_name,
-          },
-        },
-      ],
-    });
-
-    if (!respon) {
-      return res.status(401).json({ massage: "outlet is not found!" });
-    } else {
-      res.status(200).json(respon);
-    }
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const data = await sequelize.query(
+      `
+    SELECT *
+       FROM subcategories  
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE outlets.outlet_name = :outlet_name
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { outlet_name },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+export const getSubCategoryByIdOutlet = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+    SELECT *
+       FROM subcategories  
+       JOIN categories ON subcategories.id_category = categories.id 
+       JOIN outlets ON categories.id_outlet = outlets.id
+       WHERE outlets.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 export const getSubCategory = async (req, res) => {

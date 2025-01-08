@@ -3,7 +3,9 @@ import upload from "../../upload.js";
 import {
   createMenu,
   deleteMenu,
+  getMenuByCafeName,
   getMenuById,
+  getMenuByIdOutlet,
   getPaginatedMenu,
   updateMenu,
 } from "../controller/menuController.js";
@@ -11,6 +13,8 @@ import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
+router.get("/showbyidoutlet/:id", getMenuByIdOutlet);
+router.get("/showcafename/:outlet_name", getMenuByCafeName);
 router.get("/show", getPaginatedMenu);
 router.get("/show/:id", getMenuById);
 router.post("/create", upload.single("photo"), verifikasi, createMenu);
