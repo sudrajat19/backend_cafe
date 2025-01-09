@@ -60,7 +60,7 @@ export const getProfileByCafeName = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT profiles.*,outlets.outlet_name, outlets.email, outlets.role
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
        WHERE outlets.outlet_name = :outlet_name
@@ -80,7 +80,7 @@ export const getProfileByIdOutlet = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT profiles.*,outlets.outlet_name, outlets.email, outlets.role
        FROM profiles
        JOIN outlets ON profiles.id_outlet = outlets.id
        WHERE outlets.id = :id
@@ -126,6 +126,12 @@ export const createProfile = async (req, res) => {
   }
 
   try {
+    const response = await outletControl.findByPk(id_outlet);
+    if (!response) {
+      return res.status(404).json({
+        message: "id_outlet not found",
+      });
+    }
     const newProfile = await profileControl.create({
       id_outlet,
       cafe_name,

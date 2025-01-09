@@ -77,6 +77,12 @@ export const createContact = async (req, res) => {
   }
 
   try {
+    const response = await outletControl.findByPk(id_outlet);
+    if (!response) {
+      return res.status(404).json({
+        message: "id_outlet not found",
+      });
+    }
     const newContact = await contactControl.create({
       id_outlet,
       contact_name,

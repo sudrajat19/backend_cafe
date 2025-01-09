@@ -41,7 +41,7 @@ accessToken.belongsTo(outletControl, {
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",
 });
-outletControl.hasMany(profileControl, {
+outletControl.hasOne(profileControl, {
   foreignKey: "id_outlet",
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",

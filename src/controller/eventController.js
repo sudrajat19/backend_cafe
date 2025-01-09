@@ -78,6 +78,12 @@ export const createEvent = async (req, res) => {
   }
 
   try {
+    const response = await outletControl.findByPk(id_outlet);
+    if (!response) {
+      return res.status(404).json({
+        message: "id_outlet not found",
+      });
+    }
     const newEvent = await eventControl.create({
       id_outlet,
       title,

@@ -60,7 +60,7 @@ export const getGalleryByCafeName = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT galleries.*, outlets.outlet_name, outlets.email, outlets.role
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
        WHERE outlets.outlet_name = :outlet_name
@@ -80,7 +80,7 @@ export const getGalleryByIdOutlet = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT *
+      SELECT galleries.*, outlets.outlet_name, outlets.email, outlets.role
        FROM galleries
        JOIN outlets ON galleries.id_outlet = outlets.id
        WHERE outlets.id = :id
@@ -116,6 +116,12 @@ export const createGallery = async (req, res) => {
   }
 
   try {
+    const response = await outletControl.findByPk(id_outlet);
+    if (!response) {
+      return res.status(404).json({
+        message: "id_outlet not found",
+      });
+    }
     const newGallery = await galleryControll.create({
       id_outlet,
       title,

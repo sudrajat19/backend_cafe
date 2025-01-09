@@ -165,6 +165,12 @@ export const createMenu = async (req, res) => {
   }
 
   try {
+    const response = await outletControl.findByPk(id_subcategory);
+    if (!response) {
+      return res.status(404).json({
+        message: "subcategory not found",
+      });
+    }
     const newMenu = await menuControl.create({
       id_subcategory,
       title,

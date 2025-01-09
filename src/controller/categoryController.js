@@ -75,8 +75,13 @@ export const createCategory = async (req, res) => {
       message: "All field must be filled",
     });
   }
-
   try {
+    const response = await outletControl.findByPk(id_outlet);
+    if (!response) {
+      return res.status(404).json({
+        message: "id_outlet not found",
+      });
+    }
     const newCategory = await categoryControl.create({
       id_outlet,
       type,
