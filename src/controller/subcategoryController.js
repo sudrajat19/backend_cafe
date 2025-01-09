@@ -8,7 +8,7 @@ export const getSubCategoryByNameCafe = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-    SELECT subcategories.*,outlets.outlet_name, outlets.email, outlets.role
+    SELECT subcategories.*,outlets.outlet_name, outlets.email, outlets.role, categories.type
        FROM subcategories  
        JOIN categories ON subcategories.id_category = categories.id 
        JOIN outlets ON categories.id_outlet = outlets.id
@@ -96,7 +96,7 @@ export const createSubCategory = async (req, res) => {
   }
 
   try {
-    const response = await outletControl.findByPk(id_category);
+    const response = await categoryControl.findByPk(id_category);
     if (!response) {
       return res.status(404).json({
         message: "category not found",

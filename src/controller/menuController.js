@@ -1,5 +1,5 @@
 import fs from "fs";
-import { menuControl } from "../models/index.js";
+import { menuControl, subCategoryControl } from "../models/index.js";
 import sequelize from "../db/config/db.js";
 import { QueryTypes } from "sequelize";
 
@@ -185,7 +185,7 @@ export const createMenu = async (req, res) => {
   }
 
   try {
-    const response = await outletControl.findByPk(id_subcategory);
+    const response = await subCategoryControl.findByPk(id_subcategory);
     if (!response) {
       return res.status(404).json({
         message: "subcategory not found",
