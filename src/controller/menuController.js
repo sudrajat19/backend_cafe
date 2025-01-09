@@ -142,7 +142,27 @@ export const getPaginatedMenu = async (req, res) => {
       .json({ error: "An error occurred while fetching the menu." });
   }
 };
-
+export const getMenuByIdM = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT menus.*, categories.type, subcategories.title
+      FROM menus
+      JOIN subcategories ON menus.id_subcategory = subcategories.id
+      JOIN categories ON subcategories.id_category = categories.id
+      WHERE subcategories.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getMenuById = async (req, res) => {
   const id = req.params.id;
   try {

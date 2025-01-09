@@ -1,5 +1,5 @@
 import fs from "fs";
-import { subCategoryControl } from "../models/index.js";
+import { categoryControl, subCategoryControl } from "../models/index.js";
 import { QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
 
@@ -55,6 +55,26 @@ export const getSubCategory = async (req, res) => {
   }
 };
 
+export const getSubCategoryByIdSC = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await sequelize.query(
+      `
+      SELECT subcategories.*, categories.type
+      FROM subcategories
+      JOIN categories ON subcategories.id_category = categories.id
+      WHERE subcategories.id = :id
+      `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { id },
+      }
+    );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getSubCategoryById = async (req, res) => {
   const id = req.params.id;
   try {

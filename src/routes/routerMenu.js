@@ -6,6 +6,7 @@ import {
   getMenuBestSeller,
   getMenuByCafeName,
   getMenuById,
+  getMenuByIdM,
   getMenuByIdOutlet,
   getPaginatedMenu,
   updateMenu,
@@ -19,6 +20,7 @@ router.get("/showbyidoutlet/:id", getMenuByIdOutlet);
 router.get("/showcafename/:outlet_name", getMenuByCafeName);
 router.get("/show", getPaginatedMenu);
 router.get("/show/:id", getMenuById);
+router.get("/showbyid/:id", getMenuByIdM);
 router.post("/create", upload.single("photo"), verifikasi, createMenu);
 router.put("/update/:id", upload.single("photo"), verifikasi, updateMenu);
 router.delete("/delete/:id", verifikasi, deleteMenu);

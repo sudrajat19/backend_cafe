@@ -6,6 +6,7 @@ import {
   getSubCategory,
   getSubCategoryById,
   getSubCategoryByIdOutlet,
+  getSubCategoryByIdSC,
   getSubCategoryByNameCafe,
   updateSubCategory,
 } from "../controller/subcategoryController.js";
@@ -17,6 +18,7 @@ router.get("/showcafename/:outlet_name", getSubCategoryByNameCafe);
 router.get("/showbyidoutlet/:id", getSubCategoryByIdOutlet);
 router.get("/show", getSubCategory);
 router.get("/show/:id", getSubCategoryById);
+router.get("/showbyid/:id", getSubCategoryByIdSC);
 router.post("/create", upload.single("photo"), verifikasi, createSubCategory);
 router.put(
   "/update/:id",
