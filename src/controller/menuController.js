@@ -124,7 +124,7 @@ export const getPaginatedMenu = async (req, res) => {
       }
     );
 
-    const totalCount = totalItemsResult.totalCount || 0;
+    const totalCount = totalItemsResult[0].totalcount || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
     console.log(`Total Items: ${totalCount}, Total Pages: ${totalPages}`);
