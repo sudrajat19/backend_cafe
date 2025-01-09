@@ -147,11 +147,11 @@ export const getMenuByIdM = async (req, res) => {
   try {
     const data = await sequelize.query(
       `
-      SELECT menus.*, categories.type, subcategories.title
+      SELECT menus.*, categories.type, subcategories.title AS title_subcategories
       FROM menus
       JOIN subcategories ON menus.id_subcategory = subcategories.id
       JOIN categories ON subcategories.id_category = categories.id
-      WHERE subcategories.id = :id
+      WHERE menus.id = :id
       `,
       {
         type: QueryTypes.SELECT,
@@ -214,12 +214,6 @@ export const updateMenu = async (req, res) => {
   const id = req.params.id;
   const { id_subcategory, title, price, best_seller } = req.body;
   let photo = req.file ? "images/" + req.file.filename : null;
-
-  if (!id_subcategory || !title || !price || !best_seller) {
-    return res.status(400).json({
-      message: "All field must be filled",
-    });
-  }
 
   try {
     const menu = await menuControl.findByPk(id);
