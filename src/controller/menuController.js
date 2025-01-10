@@ -3,6 +3,7 @@ import {
   categoryControl,
   menuControl,
   outletControl,
+  profileControl,
   subCategoryControl,
 } from "../models/index.js";
 import sequelize from "../db/config/db.js";
@@ -72,6 +73,9 @@ export const getAllMenu = async (req, res) => {
               ],
             },
           ],
+        },
+        {
+          model: profileControl,
         },
       ],
     });
