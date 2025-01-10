@@ -87,9 +87,7 @@ export const getSubCategoryById = async (req, res) => {
 
 export const createSubCategory = async (req, res) => {
   const { id_category, title } = req.body;
-  let photo = req.file ? "images/" + req.file.filename : null;
-  console.log(req.body, "cek body");
-  if (!id_category || !req.file || !title) {
+  if (!id_category || !title) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -105,7 +103,6 @@ export const createSubCategory = async (req, res) => {
     const newSubCategory = await subCategoryControl.create({
       id_category,
       title,
-      photo,
     });
     res.status(201).json({
       message: "Success to create subcategory",
@@ -122,9 +119,8 @@ export const createSubCategory = async (req, res) => {
 export const updateSubCategory = async (req, res) => {
   const id = req.params.id;
   const { id_category, title } = req.body;
-  let photo = req.file ? "images/" + req.file.filename : null;
 
-  if (!id_category) {
+  if (!id_category || !title) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -138,17 +134,10 @@ export const updateSubCategory = async (req, res) => {
       });
     }
 
-    if (photo && subCategory.photo) {
-      fs.unlink(subCategory.photo, (err) => {
-        if (err) console.log("Fail to delete file: ", err);
-      });
-    }
-
     await subCategoryControl.update(
       {
         id_category,
         title,
-        photo: photo || subCategoryControl.photo,
       },
       { where: { id } }
     );
@@ -172,12 +161,6 @@ export const deleteSubCategory = async (req, res) => {
     if (!subCategory) {
       return res.status(404).json({
         message: "Category not found",
-      });
-    }
-
-    if (subCategory.photo) {
-      fs.unlink(subCategory.photo, (err) => {
-        if (err) console.log("Failed to delete file: ", err);
       });
     }
 

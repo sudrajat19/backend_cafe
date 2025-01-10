@@ -24,10 +24,10 @@ const login = async function (req, res) {
     }
 
     const token = jwt.sign({ id: outlet.id }, config.secret, {
-      expiresIn: "1h",
+      expiresIn: "10m",
     });
     const refreshToken = jwt.sign({ id: outlet.id }, config.refreshSecret, {
-      expiresIn: "7d",
+      expiresIn: "20m",
     });
 
     await accessToken.create({

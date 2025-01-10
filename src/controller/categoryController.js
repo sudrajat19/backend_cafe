@@ -1,6 +1,45 @@
 import fs from "fs";
-import { categoryControl, outletControl } from "../models/index.js";
-
+import {
+  categoryControl,
+  menuControl,
+  outletControl,
+  profileControl,
+  subCategoryControl,
+} from "../models/index.js";
+export const getAllCategories = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await outletControl.findAll({
+      where: {
+        outlet_name,
+      },
+      include: [
+        {
+          model: categoryControl,
+          include: [
+            {
+              model: subCategoryControl,
+              include: [
+                {
+                  model: menuControl,
+                  where: {
+                    best_seller: req.params.best_seller,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: profileControl,
+        },
+      ],
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getCategoryByNameCafe = async (req, res) => {
   try {
     const respon = await categoryControl.findAll({
@@ -67,10 +106,9 @@ export const getCategoryById = async (req, res) => {
 };
 
 export const createCategory = async (req, res) => {
-  const { id_outlet, type } = req.body;
-  let photo = req.file ? "images/" + req.file.filename : null;
+  const { id_outlet, type, descriptions } = req.body;
 
-  if (!id_outlet || !req.file || !type) {
+  if (!id_outlet || !type || !descriptions) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -85,7 +123,7 @@ export const createCategory = async (req, res) => {
     const newCategory = await categoryControl.create({
       id_outlet,
       type,
-      photo,
+      descriptions,
     });
     res.status(201).json({
       message: "Success to create category",
@@ -101,10 +139,9 @@ export const createCategory = async (req, res) => {
 
 export const updateCategory = async (req, res) => {
   const id = req.params.id;
-  const { id_outlet, type } = req.body;
-  let photo = req.file ? "images/" + req.file.filename : null;
+  const { id_outlet, type, descriptions } = req.body;
 
-  if (!id_outlet) {
+  if (!id_outlet || !type || !descriptions) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -118,17 +155,11 @@ export const updateCategory = async (req, res) => {
       });
     }
 
-    if (photo && category.photo) {
-      fs.unlink(category.photo, (err) => {
-        if (err) console.log("Fail to delete file: ", err);
-      });
-    }
-
     await categoryControl.update(
       {
         id_outlet,
         type,
-        photo: photo || categoryControl.photo,
+        descriptions,
       },
       { where: { id } }
     );
@@ -152,12 +183,6 @@ export const deleteCategory = async (req, res) => {
     if (!category) {
       return res.status(404).json({
         message: "Category not found",
-      });
-    }
-
-    if (category.photo) {
-      fs.unlink(category.photo, (err) => {
-        if (err) console.log("Failed to delete file: ", err);
       });
     }
 

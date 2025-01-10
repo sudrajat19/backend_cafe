@@ -1,7 +1,12 @@
 import fs from "fs";
-import { menuControl, subCategoryControl } from "../models/index.js";
+import {
+  categoryControl,
+  menuControl,
+  outletControl,
+  subCategoryControl,
+} from "../models/index.js";
 import sequelize from "../db/config/db.js";
-import { QueryTypes } from "sequelize";
+import { Model, QueryTypes } from "sequelize";
 
 export const getMenuBestSeller = async (req, res) => {
   const best_seller = req.params.best_seller;
@@ -42,6 +47,34 @@ export const getMenuByCafeName = async (req, res) => {
         replacements: { outlet_name },
       }
     );
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+export const getAllMenu = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await outletControl.findAll({
+      where: {
+        outlet_name,
+      },
+      include: [
+        {
+          model: categoryControl,
+          include: [
+            {
+              model: subCategoryControl,
+              include: [
+                {
+                  model: menuControl,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);
@@ -174,11 +207,18 @@ export const getMenuById = async (req, res) => {
 };
 
 export const createMenu = async (req, res) => {
-  const { id_subcategory, title, price, best_seller } = req.body;
+  const { id_subcategory, title, price, best_seller, details } = req.body;
   let photo = req.file ? "images/" + req.file.filename : null;
   console.log(req.body);
 
-  if (!id_subcategory || !req.file || !title || !price || !best_seller) {
+  if (
+    !id_subcategory ||
+    !req.file ||
+    !title ||
+    !price ||
+    !best_seller ||
+    !details
+  ) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -197,6 +237,7 @@ export const createMenu = async (req, res) => {
       price,
       best_seller,
       photo,
+      details,
     });
     res.status(201).json({
       message: "Success to create menu",
@@ -212,7 +253,7 @@ export const createMenu = async (req, res) => {
 
 export const updateMenu = async (req, res) => {
   const id = req.params.id;
-  const { id_subcategory, title, price, best_seller } = req.body;
+  const { id_subcategory, title, price, best_seller, details } = req.body;
   let photo = req.file ? "images/" + req.file.filename : null;
 
   try {
@@ -236,6 +277,7 @@ export const updateMenu = async (req, res) => {
         price,
         best_seller,
         photo: photo || menuControl.photo,
+        details,
       },
       { where: { id } }
     );

@@ -3,6 +3,7 @@ import upload from "../../upload.js";
 import {
   createMenu,
   deleteMenu,
+  getAllMenu,
   getMenuBestSeller,
   getMenuByCafeName,
   getMenuById,
@@ -18,6 +19,7 @@ const router = express.Router();
 router.get("/showbestseller/:best_seller", getMenuBestSeller);
 router.get("/showbyidoutlet/:id", getMenuByIdOutlet);
 router.get("/showcafename/:outlet_name", getMenuByCafeName);
+router.get("/showall/:outlet_name", getAllMenu);
 router.get("/show", getPaginatedMenu);
 router.get("/show/:id", getMenuById);
 router.get("/showbyid/:id", getMenuByIdM);

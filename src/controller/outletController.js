@@ -1,8 +1,41 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
-import { outletControl } from "../models/index.js";
+import {
+  contactControl,
+  eventControl,
+  galleryControll,
+  outletControl,
+  profileControl,
+} from "../models/index.js";
 import bcrypt from "bcrypt";
 
+export const getAll = async (req, res) => {
+  const outlet_name = req.params.outlet_name;
+  try {
+    const data = await outletControl.findAll({
+      where: {
+        outlet_name,
+      },
+      include: [
+        {
+          model: profileControl,
+        },
+        {
+          model: galleryControll,
+        },
+        {
+          model: eventControl,
+        },
+        {
+          model: contactControl,
+        },
+      ],
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 export const getOutletAll = async (req, res) => {
   try {
     const response = await outletControl.findAll();

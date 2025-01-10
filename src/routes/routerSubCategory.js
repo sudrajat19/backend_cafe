@@ -19,10 +19,10 @@ router.get("/showbyidoutlet/:id", getSubCategoryByIdOutlet);
 router.get("/show", getSubCategory);
 router.get("/show/:id", getSubCategoryById);
 router.get("/showbyid/:id", getSubCategoryByIdSC);
-router.post("/create", upload.single("photo"), verifikasi, createSubCategory);
+router.post("/create", verifikasi, createSubCategory);
 router.put(
   "/update/:id",
-  upload.single("photo"),
+
   verifikasi,
   updateSubCategory
 );
