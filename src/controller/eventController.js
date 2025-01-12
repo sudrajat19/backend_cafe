@@ -49,7 +49,17 @@ export const getEventByIdOutlet = async (req, res) => {
 };
 export const getEvent = async (req, res) => {
   try {
-    const data = await eventControl.findAll();
+    const data = await eventControl.findAll({
+      include: [
+        {
+          model: outletControl,
+          required: false,
+          where: {
+            outlet_name: req.params.outlet_name,
+          },
+        },
+      ],
+    });
     res.send(data);
   } catch (error) {
     res.status(400).send(error.message);

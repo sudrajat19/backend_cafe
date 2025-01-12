@@ -8,9 +8,11 @@ import profileRoute from "./routerProfile.js";
 import galleryRoute from "./routerGallery.js";
 import contactRoute from "./routerContact.js";
 import eventRoute from "./routerEvent.js";
+import { refreshAccessToken } from "../middleware/verifikasi.js";
 
 const app = express();
 app.use("/api/v1/login", loginRoute);
+app.use("/api/v1/refresh-token", refreshAccessToken);
 app.use("/api/v1/outlet", outletRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/subcategory", subCategoryRoute);
