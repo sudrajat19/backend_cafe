@@ -35,6 +35,7 @@ export const getAllCategories = async (req, res) => {
         },
       ],
     });
+    console.groupCollapsed(data, "cek data");
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);

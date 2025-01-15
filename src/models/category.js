@@ -4,7 +4,7 @@ const Category = {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  photo: {
+  descriptions: {
     type: Sequelize.STRING,
     allowNull: false,
   },

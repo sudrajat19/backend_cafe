@@ -8,10 +8,6 @@ const subcategory = {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  photo: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
 };
 
 export default subcategory;
