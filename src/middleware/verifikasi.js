@@ -1,6 +1,7 @@
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import config from "../db/config/secret.js";
+import { accessToken, outletControl } from "../models/index.js";
 
 export const verifikasi = (req, res, next) => {
   let tokenWithBearer = req.headers.authorization;
@@ -39,33 +40,31 @@ export const verifikasi = (req, res, next) => {
 
 export const refreshAccessToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-      return res.status(401).json({ message: "Refresh token not found!" });
-    }
+    const refreshToken = req.params.refreshToken;
 
     const tokenData = await accessToken.findOne({
       where: { refresh_token: refreshToken },
+      include: [
+        {
+          model: outletControl,
+        },
+      ],
     });
-    if (!tokenData) {
+    if (!tokenData.refresh_token) {
       return res.status(403).json({ message: "Invalid refresh token!" });
     }
-
-    jwt.verify(refreshToken, config.refreshSecret, (err, decoded) => {
-      if (err) {
-        return res
-          .status(403)
-          .json({ message: "Invalid or expired refresh token!" });
-      }
-
-      const newAccessToken = jwt.sign({ id: decoded.id }, config.secret, {
+    const newAccessToken = jwt.sign(
+      { id: tokenData.outlets.id },
+      config.secret,
+      {
         expiresIn: "10m",
-      });
-
-      res.json({
-        success: true,
-        accessToken: newAccessToken,
-      });
+      }
+    );
+    res.json({
+      success: true,
+      message: "Token JWT berhasil dibuat!",
+      accessToken: newAccessToken,
+      currUser: tokenData.id,
     });
   } catch (error) {
     console.error("Error refreshing token:", error);

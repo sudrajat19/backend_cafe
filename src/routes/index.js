@@ -12,7 +12,7 @@ import { refreshAccessToken } from "../middleware/verifikasi.js";
 
 const app = express();
 app.use("/api/v1/login", loginRoute);
-app.use("/api/v1/refresh-token", refreshAccessToken);
+app.use("/api/v1/refresh-token/:refreshToken", refreshAccessToken);
 app.use("/api/v1/outlet", outletRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/subcategory", subCategoryRoute);
