@@ -8,7 +8,50 @@ import {
   profileControl,
 } from "../models/index.js";
 import bcrypt from "bcrypt";
+export const getPaginatedOutlet = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+  console.log(search);
 
+  try {
+    const outlet = await sequelize.query(
+      `SELECT *
+       FROM outlets
+        WHERE outlets.outlet_name LIKE :search
+       LIMIT :limit OFFSET :offset`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { limit, offset, search: `%${search}%` },
+      }
+    );
+
+    const totalItems = await sequelize.query(
+      `SELECT *
+       FROM outlets
+        WHERE outlets.outlet_name LIKE :search `,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { search: `%${search}%` },
+      }
+    );
+
+    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
+    const totalPages = Math.ceil(totalCount / limit);
+    console.log(totalItems.length, "cek count");
+
+    res.json({
+      totalItems: totalCount,
+      totalPages,
+      currentPage: page,
+      outlet: outlet || [],
+    });
+  } catch (error) {
+    console.error("Error fetching outlet:", error);
+    res.status(500).send({ error: "An error occurred while fetching outlet." });
+  }
+};
 export const getAll = async (req, res) => {
   const outlet_name = req.params.outlet_name;
   try {

@@ -6,6 +6,7 @@ import {
   getAllByIdOutlet,
   getOutletAll,
   getOutletAllById,
+  getPaginatedOutlet,
   updateOutlet,
 } from "../controller/outletController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
@@ -13,6 +14,7 @@ import { verifikasi } from "../middleware/verifikasi.js";
 const router = express.Router();
 
 router.get("/showalltable/:outlet_name", getAll);
+router.get("/showpaginated", getPaginatedOutlet);
 router.get("/show", getOutletAll);
 router.get("/show/:id", getOutletAllById);
 router.get("/showall", getAllByIdOutlet);

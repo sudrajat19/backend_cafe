@@ -214,15 +214,9 @@ export const createMenu = async (req, res) => {
   const { id_subcategory, title, price, best_seller, details } = req.body;
   let photo = req.file ? "images/" + req.file.filename : null;
   console.log(req.body);
+  console.log(req.file);
 
-  if (
-    !id_subcategory ||
-    !req.file ||
-    !title ||
-    !price ||
-    !best_seller ||
-    !details
-  ) {
+  if (!id_subcategory || !title || !price || !best_seller || !details) {
     return res.status(400).json({
       message: "All field must be filled",
     });

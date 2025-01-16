@@ -20,6 +20,10 @@ const Menu = {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  details: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 };
 
 export default Menu;
