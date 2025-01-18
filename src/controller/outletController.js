@@ -134,17 +134,6 @@ export const createOutlet = async (req, res) => {
   const password = req.body.password;
   const role = req.body.role;
 
-  const existingOutlet = await sequelize.query(
-    "SELECT email FROM outlets WHERE outlets.email = :email",
-    {
-      replacements: { email },
-      type: QueryTypes.SELECT,
-    }
-  );
-  if (existingOutlet.length > 0) {
-    return res.status(400).json({ message: "Email existing already" });
-  }
-
   if (!outlet_name || !email || !password || !role) {
     return res.status(400).json({
       message: "All field must be filled",
@@ -192,17 +181,6 @@ export const updateOutlet = async (req, res) => {
     .catch((err) => {
       console.error("Something wrong", err, res);
     });
-
-  const existingOutlet = await sequelize.query(
-    "SELECT email FROM outlets WHERE outlets.email = :email",
-    {
-      replacements: { email },
-      type: QueryTypes.SELECT,
-    }
-  );
-  if (existingOutlet.length > 0) {
-    return res.status(400).json({ message: "Email existing already" });
-  }
 
   if (!outlet_name || !email || !password || !role) {
     return res.status(400).json({

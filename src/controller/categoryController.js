@@ -47,7 +47,6 @@ export const getCategoryByNameCafe = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             outlet_name: req.params.outlet_name,
           },
@@ -70,7 +69,6 @@ export const getCategoryByIdOutlet = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             id: req.params.id,
           },

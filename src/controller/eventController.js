@@ -7,7 +7,6 @@ export const getEventByNameCafe = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             outlet_name: req.params.outlet_name,
           },
@@ -30,7 +29,6 @@ export const getEventByIdOutlet = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             id: req.params.id,
           },
@@ -53,7 +51,6 @@ export const getEvent = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             outlet_name: req.params.outlet_name,
           },

@@ -6,7 +6,6 @@ export const getContactByNameCafe = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             outlet_name: req.params.outlet_name,
           },
@@ -29,7 +28,6 @@ export const getContactByIdOutlet = async (req, res) => {
       include: [
         {
           model: outletControl,
-          required: false,
           where: {
             id: req.params.id,
           },

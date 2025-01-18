@@ -1,5 +1,5 @@
 import fs from "fs";
-import { galleryControll } from "../models/index.js";
+import { galleryControll, outletControl } from "../models/index.js";
 import sequelize from "../db/config/db.js";
 import { QueryTypes } from "sequelize";
 

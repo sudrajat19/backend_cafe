@@ -6,19 +6,19 @@ const Profile = {
   },
   cafe_name: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   address: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   history: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   logo: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 };
 
