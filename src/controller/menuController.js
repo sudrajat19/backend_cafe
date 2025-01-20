@@ -17,22 +17,22 @@ export const getPaginatedMenus = async (req, res) => {
   const search = req.query.search || "";
 
   try {
-    const { count, rows } = await outletControl.findAndCountAll({
-      where: {
-        outlet_name: {
-          [Op.like]: `%${search}%`,
-        },
-      },
+    const { count, rows } = await menuControl.findAndCountAll({
       include: [
         {
-          model: categoryControl,
-          required: false,
+          model: subCategoryControl,
           include: [
             {
-              model: subCategoryControl,
+              model: categoryControl,
               include: [
                 {
-                  model: menuControl,
+                  model: outletControl,
+                  attributes: ["outlet_name"],
+                  where: {
+                    outlet_name: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
                 },
               ],
             },

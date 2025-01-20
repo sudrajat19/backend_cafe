@@ -9,15 +9,16 @@ export const getPaginatedContact = async (req, res) => {
   const search = req.query.search || "";
 
   try {
-    const { count, rows } = await outletControl.findAndCountAll({
-      where: {
-        outlet_name: {
-          [Op.like]: `%${search}%`,
-        },
-      },
+    const { count, rows } = await contactControl.findAndCountAll({
       include: [
         {
-          model: contactControl,
+          model: outletControl,
+          attributes: ["outlet_name"],
+          where: {
+            outlet_name: {
+              [Op.like]: `%${search}%`,
+            },
+          },
         },
       ],
       limit,

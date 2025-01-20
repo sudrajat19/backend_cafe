@@ -14,15 +14,16 @@ export const getPaginatedCategory = async (req, res) => {
   const search = req.query.search || "";
 
   try {
-    const { count, rows } = await outletControl.findAndCountAll({
-      where: {
-        outlet_name: {
-          [Op.like]: `%${search}%`,
-        },
-      },
+    const { count, rows } = await categoryControl.findAndCountAll({
       include: [
         {
-          model: categoryControl,
+          model: outletControl,
+          attributes: ["outlet_name"],
+          where: {
+            outlet_name: {
+              [Op.like]: `%${search}%`,
+            },
+          },
         },
       ],
       limit,
@@ -36,7 +37,7 @@ export const getPaginatedCategory = async (req, res) => {
       totalItems: count,
       totalPages,
       currentPage: page,
-      cateogry: rows || [],
+      category: rows || [],
     });
   } catch (error) {
     console.error("Error fetching category:", error);
