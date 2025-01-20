@@ -50,11 +50,12 @@ export const refreshAccessToken = async (req, res) => {
         },
       ],
     });
+    console.log(tokenData.outlet.id, "cek data");
     if (!tokenData.refresh_token) {
       return res.status(403).json({ message: "Invalid refresh token!" });
     }
     const newAccessToken = jwt.sign(
-      { id: tokenData.outlets.id },
+      { id: tokenData.outlet.id },
       config.secret,
       {
         expiresIn: "10m",
@@ -64,7 +65,7 @@ export const refreshAccessToken = async (req, res) => {
       success: true,
       message: "Token JWT berhasil dibuat!",
       accessToken: newAccessToken,
-      currUser: tokenData.id,
+      currUser: tokenData.outlet.id,
     });
   } catch (error) {
     console.error("Error refreshing token:", error);
