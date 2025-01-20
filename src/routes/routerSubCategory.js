@@ -3,6 +3,7 @@ import upload from "../../upload.js";
 import {
   createSubCategory,
   deleteSubCategory,
+  getPaginatedSubCategory,
   getSubCategory,
   getSubCategoryById,
   getSubCategoryByIdOutlet,
@@ -17,6 +18,7 @@ const router = express.Router();
 router.get("/showcafename/:outlet_name", getSubCategoryByNameCafe);
 router.get("/showbyidoutlet/:id", getSubCategoryByIdOutlet);
 router.get("/show", getSubCategory);
+router.get("/showpaginated", getPaginatedSubCategory);
 router.get("/show/:id", getSubCategoryById);
 router.get("/showbyid/:id", getSubCategoryByIdSC);
 router.post("/create", verifikasi, createSubCategory);

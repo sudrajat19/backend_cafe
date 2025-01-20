@@ -1,16 +1,66 @@
 import fs from "fs";
 import {
   categoryControl,
+  contactControl,
   menuControl,
   outletControl,
   profileControl,
   subCategoryControl,
 } from "../models/index.js";
 import sequelize from "../db/config/db.js";
-import { Model, QueryTypes } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
+
+export const getPaginatedMenus = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  try {
+    const { count, rows } = await outletControl.findAndCountAll({
+      where: {
+        outlet_name: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      include: [
+        {
+          model: categoryControl,
+          required: false,
+          include: [
+            {
+              model: subCategoryControl,
+              include: [
+                {
+                  model: menuControl,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      menu: rows || [],
+    });
+  } catch (error) {
+    console.error("Error fetching menu:", error);
+    res.status(500).send({ error: "An error occurred while fetching menu." });
+  }
+};
 
 export const getMenuBestSeller = async (req, res) => {
   const best_seller = req.params.best_seller;
+
   try {
     const data = await sequelize.query(
       `
@@ -76,6 +126,9 @@ export const getAllMenu = async (req, res) => {
         },
         {
           model: profileControl,
+        },
+        {
+          model: contactControl,
         },
       ],
     });

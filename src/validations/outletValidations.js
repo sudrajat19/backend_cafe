@@ -2,12 +2,12 @@ import { outletControl } from "../models/index.js";
 
 export const updateEmailValidator = async (req, res, next) => {
   const { email } = req.body;
-  const { id } = req.params;
+  const { id_outlet } = req.params;
 
   try {
     const response = await outletControl.findOne({ where: { email } });
     if (response) {
-      if (response.id == id) {
+      if (response.id == id_outlet) {
         next();
       } else {
         return res.status(400).json({ message: "email existing already!" });
@@ -48,12 +48,12 @@ export const createOutletValidator = async (req, res, next) => {
 };
 export const updateOutletValidator = async (req, res, next) => {
   const { outlet_name } = req.body;
-  const { id } = req.params;
+  const { id_outlet } = req.params;
 
   try {
     const response = await outletControl.findOne({ where: { outlet_name } });
     if (response) {
-      if (response.id == id) {
+      if (response.id == id_outlet) {
         next();
       } else {
         return res

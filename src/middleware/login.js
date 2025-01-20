@@ -16,7 +16,7 @@ const login = async function (req, res) {
 
     const outlet = await outletControl.findOne({ where: { email } });
     if (!outlet) {
-      return res.status(400).json({ message: "Email is salah!" });
+      return res.status(400).json({ message: "Email is wrong!" });
     }
     const isMatch = await bcrypt.compare(password, outlet.password);
     if (!isMatch) {

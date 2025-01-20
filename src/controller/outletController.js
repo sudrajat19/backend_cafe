@@ -2,8 +2,6 @@ import { QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
 import {
   contactControl,
-  eventControl,
-  galleryControll,
   outletControl,
   profileControl,
 } from "../models/index.js";
@@ -62,12 +60,6 @@ export const getAll = async (req, res) => {
       include: [
         {
           model: profileControl,
-        },
-        {
-          model: galleryControll,
-        },
-        {
-          model: eventControl,
         },
         {
           model: contactControl,
@@ -163,14 +155,14 @@ export const createOutlet = async (req, res) => {
 
 export const updateOutlet = async (req, res) => {
   const saltRounds = 10;
-  const id = req.params.id;
+  const id_outlet = req.params.id_outlet;
   const outlet_name = req.body.outlet_name;
   const email = req.body.email;
   const password = req.body.password;
   const role = req.body.role;
 
   outletControl
-    .findByPk(id)
+    .findByPk(id_outlet)
     .then((data) => {
       if (data) {
         console.log(data.toJSON());
@@ -198,7 +190,7 @@ export const updateOutlet = async (req, res) => {
         role,
       },
       {
-        where: { id },
+        where: { id: id_outlet },
       }
     );
 

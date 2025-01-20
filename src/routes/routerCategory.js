@@ -8,13 +8,15 @@ import {
   getCategoryById,
   getCategoryByIdOutlet,
   getCategoryByNameCafe,
+  getPaginatedCategory,
   updateCategory,
 } from "../controller/categoryController.js";
 import { verifikasi } from "../middleware/verifikasi.js";
 
 const router = express.Router();
 
-router.get("/show", getCategory);
+router.get("/showpaginated", getPaginatedCategory);
+router.get("/showC", getCategory);
 router.get("/showall/:outlet_name/:best_seller", getAllCategories);
 router.get("/showbyidoutlet/:id", getCategoryByIdOutlet);
 router.get("/showcafename/:outlet_name", getCategoryByNameCafe);

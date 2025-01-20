@@ -16,6 +16,7 @@ import {
   updateEmailValidator,
   updateOutletValidator,
 } from "../validations/outletValidations.js";
+import { validationsPassword } from "../validations/passwordValidations.js";
 
 const router = express.Router();
 
@@ -31,8 +32,9 @@ router.post(
   createOutlet
 );
 router.put(
-  "/update/:id",
+  "/update/:id_outlet/:verify_password",
   verifikasi,
+  validationsPassword,
   updateEmailValidator,
   updateOutletValidator,
   updateOutlet

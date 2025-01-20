@@ -1,7 +1,57 @@
 import fs from "fs";
-import { categoryControl, subCategoryControl } from "../models/index.js";
-import { QueryTypes } from "sequelize";
+import {
+  categoryControl,
+  outletControl,
+  subCategoryControl,
+} from "../models/index.js";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
+
+export const getPaginatedSubCategory = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  try {
+    const { count, rows } = await outletControl.findAndCountAll({
+      attributes: ["outlet_name"],
+      where: {
+        outlet_name: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      include: [
+        {
+          model: categoryControl,
+          attributes: ["id"],
+          include: [
+            {
+              model: subCategoryControl,
+            },
+          ],
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      subcategory: rows || [],
+    });
+  } catch (error) {
+    console.error("Error fetching subcategories:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching subcategories." });
+  }
+};
 
 export const getSubCategoryByNameCafe = async (req, res) => {
   const outlet_name = req.params.outlet_name;

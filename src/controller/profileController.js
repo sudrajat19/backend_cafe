@@ -1,7 +1,65 @@
 import fs from "fs";
-import { profileControl } from "../models/index.js";
-import { QueryTypes } from "sequelize";
+import { outletControl, profileControl } from "../models/index.js";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
+import bcrypt from "bcrypt";
+import { deleteFile } from "../validations/fileValidations.js";
+
+export const getPaginatedProfiles = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  try {
+    const { count, rows } = await outletControl.findAndCountAll({
+      attributes: ["outlet_name"],
+      where: {
+        outlet_name: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      include: [
+        {
+          model: profileControl,
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      subcategory: rows || [],
+    });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching profile." });
+  }
+};
+
+export const getOutletProfile = async (req, res) => {
+  try {
+    const data = await outletControl.findOne({
+      where: { id: req.params.id },
+      include: [
+        {
+          model: profileControl,
+        },
+      ],
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
 
 export const getPaginatedProfile = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -166,9 +224,7 @@ export const updateProfile = async (req, res) => {
     }
 
     if (logo && profile.logo) {
-      fs.unlink(profile.logo, (err) => {
-        if (err) console.log("Fail to delete file: ", err);
-      });
+      deleteFile(profile.logo);
     }
 
     await profileControl.update(
@@ -193,6 +249,65 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+export const updateProfileOutlet = async (req, res) => {
+  const saltRounds = 10;
+  const id_outlet = req.params.id_outlet;
+  const { outlet_name, email, password, cafe_name, address, history } =
+    req.body;
+  let logo = req.file ? "images/" + req.file.filename : null;
+  try {
+    const profile = await outletControl.findOne({
+      where: { id: id_outlet },
+      include: [
+        {
+          model: profileControl,
+        },
+      ],
+    });
+    console.log(profile.profile.logo, "cek data");
+    if (!profile.profile) {
+      return res.status(404).json({
+        message: "profile not found",
+      });
+    }
+
+    if (logo && profile.profile.logo) {
+      deleteFile(profile.profile.logo);
+    }
+
+    await profileControl.update(
+      {
+        id_outlet: profile.profile.id_outlet,
+        cafe_name: cafe_name || profile.profile.cafe_name,
+        address: address || profile.profile.address,
+        history: history || profile.profile.history,
+        logo: logo || profile.profileControl.logo,
+      },
+      { where: { id_outlet } }
+    );
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    await outletControl.update(
+      {
+        outlet_name: outlet_name || profile.outlet_name,
+        email: email || profile.email,
+        password: hashedPassword || profile.password,
+        role: profile.role,
+      },
+      { where: { id: id_outlet } }
+    );
+
+    res.status(200).json({
+      message: "Success to change Outlet and Profile",
+    });
+  } catch (err) {
+    res.status(400).send({
+      message: "Failed to change profile",
+      error: err.message,
+    });
+  }
+};
+
 export const deleteProfile = async (req, res) => {
   const id = req.params.id;
 
@@ -205,9 +320,7 @@ export const deleteProfile = async (req, res) => {
     }
 
     if (profile.logo) {
-      fs.unlink(profile.logo, (err) => {
-        if (err) console.log("Failed to delete file: ", err);
-      });
+      deleteFile(profile.logo);
     }
 
     await profileControl.destroy({
