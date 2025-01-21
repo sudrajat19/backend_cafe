@@ -25,66 +25,66 @@ const contactControl = db.define("contact", Contact, {
 
 outletControl.hasMany(accessToken, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 accessToken.belongsTo(outletControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 outletControl.hasOne(profileControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 profileControl.belongsTo(outletControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 outletControl.hasMany(contactControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 contactControl.belongsTo(outletControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 outletControl.hasMany(categoryControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 categoryControl.belongsTo(outletControl, {
   foreignKey: "id_outlet",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 categoryControl.hasMany(subCategoryControl, {
   foreignKey: "id_category",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 subCategoryControl.belongsTo(categoryControl, {
   foreignKey: "id_category",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 subCategoryControl.hasMany(menuControl, {
   foreignKey: "id_subcategory",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 menuControl.belongsTo(subCategoryControl, {
   foreignKey: "id_subcategory",
-  onDelete: "RESTRICT",
-  onUpdate: "RESTRICT",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 export {
