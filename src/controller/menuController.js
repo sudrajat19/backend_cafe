@@ -84,20 +84,19 @@ export const getMenuBestSeller = async (req, res) => {
 export const getMenuByCafeName = async (req, res) => {
   const outlet_name = req.params.outlet_name;
   try {
-    const data = await sequelize.query(
-      `
-      SELECT menus.*,outlets.outlet_name, outlets.email, outlets.role
-       FROM menus  
-       JOIN subcategories ON menus.id_subcategory = subcategories.id
-       JOIN categories ON subcategories.id_category = categories.id 
-       JOIN outlets ON categories.id_outlet = outlets.id
-       WHERE outlets.outlet_name = :outlet_name
-      `,
-      {
-        type: QueryTypes.SELECT,
-        replacements: { outlet_name },
-      }
-    );
+    const data = await menuControl.findAll({
+      include: [
+        {
+          model: subCategoryControl,
+          include: [
+            {
+              model: categoryControl,
+              include: [{ model: outletControl, where: { outlet_name } }],
+            },
+          ],
+        },
+      ],
+    });
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);

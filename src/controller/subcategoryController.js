@@ -55,19 +55,19 @@ export const getPaginatedSubCategory = async (req, res) => {
 export const getSubCategoryByNameCafe = async (req, res) => {
   const outlet_name = req.params.outlet_name;
   try {
-    const data = await sequelize.query(
-      `
-    SELECT subcategories.*,outlets.outlet_name, outlets.email, outlets.role, categories.type
-       FROM subcategories  
-       JOIN categories ON subcategories.id_category = categories.id 
-       JOIN outlets ON categories.id_outlet = outlets.id
-       WHERE outlets.outlet_name = :outlet_name
-      `,
-      {
-        type: QueryTypes.SELECT,
-        replacements: { outlet_name },
-      }
-    );
+    const data = await subCategoryControl.findAll({
+      include: [
+        {
+          model: categoryControl,
+          include: [
+            {
+              model: outletControl,
+              where: { outlet_name },
+            },
+          ],
+        },
+      ],
+    });
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);
