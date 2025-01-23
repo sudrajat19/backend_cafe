@@ -6,50 +6,63 @@ import {
   profileControl,
 } from "../models/index.js";
 import bcrypt from "bcrypt";
+export const getOutletAndProfileById = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await outletControl.findOne({
+      where: { id },
+      include: [
+        {
+          model: profileControl,
+        },
+      ],
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: "data not found" });
+  }
+};
+
 export const getPaginatedOutlet = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
-  console.log(search);
 
   try {
-    const outlet = await sequelize.query(
-      `SELECT *
-       FROM outlets
-        WHERE outlets.outlet_name LIKE :search
-       LIMIT :limit OFFSET :offset`,
-      {
-        type: QueryTypes.SELECT,
-        replacements: { limit, offset, search: `%${search}%` },
-      }
-    );
+    const { count, rows } = await outletControl.findAndCountAll({
+      attributes: ["outlet_name", "id", "email", "role"],
+      where: {
+        outlet_name: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      include: [
+        {
+          model: profileControl,
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
 
-    const totalItems = await sequelize.query(
-      `SELECT *
-       FROM outlets
-        WHERE outlets.outlet_name LIKE :search `,
-      {
-        type: QueryTypes.SELECT,
-        replacements: { search: `%${search}%` },
-      }
-    );
-
-    const totalCount = totalItems.length > 0 ? totalItems.length : 0;
-    const totalPages = Math.ceil(totalCount / limit);
-    console.log(totalItems.length, "cek count");
+    const totalPages = Math.ceil(count / limit);
 
     res.json({
-      totalItems: totalCount,
+      totalItems: count,
       totalPages,
       currentPage: page,
-      outlet: outlet || [],
+      subcategory: rows || [],
     });
   } catch (error) {
-    console.error("Error fetching outlet:", error);
-    res.status(500).send({ error: "An error occurred while fetching outlet." });
+    console.error("Error fetching profile:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching profile." });
   }
 };
+
 export const getAll = async (req, res) => {
   const outlet_name = req.params.outlet_name;
   try {

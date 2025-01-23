@@ -17,7 +17,6 @@ export const verifikasi = (req, res, next) => {
             else console.log("File deleted successfully.");
           });
         }
-        console.log(err);
         return res
           .status(401)
           .send({ auth: false, message: "Token not existing!" });
@@ -50,7 +49,6 @@ export const refreshAccessToken = async (req, res) => {
         },
       ],
     });
-    console.log(tokenData.outlet.id, "cek data");
     if (!tokenData.refresh_token) {
       return res.status(403).json({ message: "Invalid refresh token!" });
     }
@@ -68,7 +66,6 @@ export const refreshAccessToken = async (req, res) => {
       currUser: tokenData.outlet.id,
     });
   } catch (error) {
-    console.error("Error refreshing token:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

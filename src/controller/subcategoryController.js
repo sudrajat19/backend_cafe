@@ -18,9 +18,11 @@ export const getPaginatedSubCategory = async (req, res) => {
       include: [
         {
           model: categoryControl,
+          require: false,
           include: [
             {
               model: outletControl,
+              require: false,
               attributes: ["outlet_name"],
               where: {
                 outlet_name: {

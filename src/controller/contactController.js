@@ -1,6 +1,7 @@
 import fs from "fs";
 import { contactControl, outletControl } from "../models/index.js";
 import { Op } from "sequelize";
+import { deleteFile } from "../validations/fileValidations.js";
 
 export const getPaginatedContact = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -25,7 +26,6 @@ export const getPaginatedContact = async (req, res) => {
       offset,
       order: [["createdAt", "DESC"]],
     });
-    console.log(rows, "cek data");
 
     const totalPages = Math.ceil(count / limit);
 
@@ -106,11 +106,10 @@ export const getContactById = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-  const { id_outlet, contact_name, value } = req.body;
+  const { id_outlet, contact_name, value, link } = req.body;
   let logo = req.file ? "images/" + req.file.filename : null;
-  console.log(req.body);
 
-  if (!id_outlet || !req.file || !contact_name || !value) {
+  if (!id_outlet || !req.file || !contact_name || !link || !value) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -128,6 +127,7 @@ export const createContact = async (req, res) => {
       contact_name,
       value,
       logo,
+      link,
     });
     res.status(201).json({
       message: "Success to create contact",
@@ -143,10 +143,10 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   const id = req.params.id;
-  const { id_outlet, contact_name, value } = req.body;
+  const { id_outlet, contact_name, value, link } = req.body;
   let logo = req.file ? "images/" + req.file.filename : null;
 
-  if (!id_outlet || !contact_name || !value) {
+  if (!id_outlet || !contact_name || !link || !value) {
     return res.status(400).json({
       message: "All field must be filled",
     });
@@ -161,9 +161,7 @@ export const updateContact = async (req, res) => {
     }
 
     if (logo && contact.logo) {
-      fs.unlink(contact.logo, (err) => {
-        if (err) console.log("Fail to delete file: ", err);
-      });
+      deleteFile(contact.logo);
     }
 
     await contactControl.update(
@@ -171,6 +169,7 @@ export const updateContact = async (req, res) => {
         id_outlet,
         contact_name,
         value,
+        link,
         logo: logo || contactControl.logo,
       },
       { where: { id } }
@@ -198,10 +197,8 @@ export const deleteContact = async (req, res) => {
       });
     }
 
-    if (contact.logo) {
-      fs.unlink(contact.logo, (err) => {
-        if (err) console.log("Failed to delete file: ", err);
-      });
+    if (logo && contact.logo) {
+      deleteFile(contact.logo);
     }
 
     await contactControl.destroy({

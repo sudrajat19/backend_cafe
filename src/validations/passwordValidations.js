@@ -1,12 +1,12 @@
 import { outletControl } from "../models/index.js";
 import bcrypt from "bcrypt";
 export const validationsPassword = async (req, res, next) => {
-  const { verify_password } = req.body;
+  const { verify_password, password } = req.body;
   console.log(req.params.id_outlet, "cek");
   console.log(verify_password, "cek");
 
   try {
-    if (verify_password) {
+    if (verify_password && password) {
       const data = await outletControl.findOne({
         where: { id: req.params.id_outlet },
       });
@@ -17,6 +17,8 @@ export const validationsPassword = async (req, res, next) => {
         next();
         // return res.status(200).json({ message: "successfully to match data" });
       }
+    } else if (password) {
+      return res.status(400).json({ message: "please filled verify password" });
     } else {
       next();
     }

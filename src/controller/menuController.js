@@ -9,15 +9,18 @@ import {
 } from "../models/index.js";
 import sequelize from "../db/config/db.js";
 import { Op, QueryTypes } from "sequelize";
+import { deleteFile } from "../validations/fileValidations.js";
 
 export const getPaginatedMenus = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
+  const search_title = req.query.search_title || "";
 
   try {
     const { count, rows } = await menuControl.findAndCountAll({
+      where: { title: { [Op.like]: `%${search_title}%` } },
       include: [
         {
           model: subCategoryControl,
@@ -165,8 +168,6 @@ export const getPaginatedMenu = async (req, res) => {
   const offset = (page - 1) * limit;
   const search = req.query.search || "";
 
-  console.log(`Search Query: ${search}, Outlet Name: ${outlet_name}`);
-
   if (!outlet_name) {
     return res.status(400).json({ error: "Outlet name is required." });
   }
@@ -216,8 +217,6 @@ export const getPaginatedMenu = async (req, res) => {
     const totalCount = totalItemsResult[0].totalcount || 0;
     const totalPages = Math.ceil(totalCount / limit);
 
-    console.log(`Total Items: ${totalCount}, Total Pages: ${totalPages}`);
-
     res.json({
       totalItems: totalCount,
       totalPages,
@@ -265,8 +264,6 @@ export const getMenuById = async (req, res) => {
 export const createMenu = async (req, res) => {
   const { id_subcategory, title, price, best_seller, details } = req.body;
   let photo = req.file ? "images/" + req.file.filename : null;
-  console.log(req.body);
-  console.log(req.file);
 
   if (!id_subcategory || !title || !price || !best_seller || !details) {
     return res.status(400).json({
@@ -315,9 +312,7 @@ export const updateMenu = async (req, res) => {
     }
 
     if (photo && menu.photo) {
-      fs.unlink(menu.photo, (err) => {
-        if (err) console.log("Fail to delete file: ", err);
-      });
+      deleteFile(menu.photo);
     }
 
     await menuControl.update(
@@ -355,9 +350,7 @@ export const deleteMenu = async (req, res) => {
     }
 
     if (menu.photo) {
-      fs.unlink(menu.photo, (err) => {
-        if (err) console.log("Failed to delete file: ", err);
-      });
+      deleteFile(menu.photo);
     }
 
     await menuControl.destroy({

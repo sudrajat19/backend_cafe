@@ -6,6 +6,7 @@ import {
   getAllByIdOutlet,
   getOutletAll,
   getOutletAllById,
+  getOutletAndProfileById,
   getPaginatedOutlet,
   updateOutlet,
 } from "../controller/outletController.js";
@@ -24,6 +25,7 @@ router.get("/showalltable/:outlet_name", getAll);
 router.get("/showpaginated", getPaginatedOutlet);
 router.get("/show", getOutletAll);
 router.get("/show/:id", getOutletAllById);
+router.get("/showprofile/:id", getOutletAndProfileById);
 router.get("/showall", getAllByIdOutlet);
 router.post(
   "/create",

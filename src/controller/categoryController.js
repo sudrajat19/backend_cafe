@@ -76,7 +76,6 @@ export const getAllCategories = async (req, res) => {
         },
       ],
     });
-    console.groupCollapsed(data, "cek data");
     res.send(data);
   } catch (error) {
     res.status(500).send(error.message);
@@ -147,7 +146,6 @@ export const getCategoryById = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   const { id_outlet, type, descriptions } = req.body;
-  console.log(req.body, "cek body");
 
   if (!id_outlet || !type || !descriptions) {
     return res.status(400).json({

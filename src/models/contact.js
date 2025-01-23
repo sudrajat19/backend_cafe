@@ -9,7 +9,11 @@ const Contact = {
     allowNull: false,
   },
   value: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  link: {
+    type: Sequelize.STRING,
     allowNull: false,
   },
   logo: {

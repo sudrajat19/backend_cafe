@@ -92,7 +92,6 @@ export const getPaginatedProfile = async (req, res) => {
 
     const totalCount = totalItems.length > 0 ? totalItems.length : 0;
     const totalPages = Math.ceil(totalCount / limit);
-    console.log(totalItems.length, "cek count");
 
     res.json({
       totalItems: totalCount,
@@ -170,13 +169,6 @@ export const getProfileById = async (req, res) => {
 export const createProfile = async (req, res) => {
   const { id_outlet, cafe_name, address, history } = req.body;
   let logo = req.file ? "images/" + req.file.filename : null;
-  console.log(req.body);
-
-  if (!id_outlet || !req.file || !cafe_name || !address || !history) {
-    return res.status(400).json({
-      message: "All field must be filled",
-    });
-  }
 
   try {
     const response = await outletControl.findByPk(id_outlet);
@@ -264,7 +256,6 @@ export const updateProfileOutlet = async (req, res) => {
         },
       ],
     });
-    console.log(profile.profile.logo, "cek data");
     if (!profile.profile) {
       return res.status(404).json({
         message: "profile not found",
@@ -278,25 +269,35 @@ export const updateProfileOutlet = async (req, res) => {
     await profileControl.update(
       {
         id_outlet: profile.profile.id_outlet,
-        cafe_name: cafe_name || profile.profile.cafe_name,
-        address: address || profile.profile.address,
-        history: history || profile.profile.history,
-        logo: logo || profile.profileControl.logo,
+        cafe_name: cafe_name ? cafe_name : profile.profile.cafe_name,
+        address: address ? address : profile.profile.address,
+        history: history ? history : profile.profile.history,
+        logo: logo ? logo : profile.profile.logo,
       },
       { where: { id_outlet } }
     );
-
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    await outletControl.update(
-      {
-        outlet_name: outlet_name || profile.outlet_name,
-        email: email || profile.email,
-        password: hashedPassword || profile.password,
-        role: profile.role,
-      },
-      { where: { id: id_outlet } }
-    );
-
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      await outletControl.update(
+        {
+          outlet_name: outlet_name ? outlet_name : profile.outlet_name,
+          email: email ? email : profile.email,
+          password: hashedPassword,
+          role: profile.role,
+        },
+        { where: { id: id_outlet } }
+      );
+    } else {
+      await outletControl.update(
+        {
+          outlet_name: outlet_name ? outlet_name : profile.outlet_name,
+          email: email ? email : profile.email,
+          password: profile.password,
+          role: profile.role,
+        },
+        { where: { id: id_outlet } }
+      );
+    }
     res.status(200).json({
       message: "Success to change Outlet and Profile",
     });
