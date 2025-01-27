@@ -108,6 +108,7 @@ export const getContactById = async (req, res) => {
 export const createContact = async (req, res) => {
   const { id_outlet, contact_name, value, link } = req.body;
   let logo = req.file ? "images/" + req.file.filename : null;
+  console.log(req.body, "cdek data");
 
   if (!id_outlet || !req.file || !contact_name || !link || !value) {
     return res.status(400).json({

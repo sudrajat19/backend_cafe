@@ -1,14 +1,19 @@
 import db from "../db/config/db.js";
-import category from "./category.js";
-import subCategory from "./subcategory.js";
-import menu from "./menu.js";
-import outlet from "./outlet.js";
-import AccessToken from "./access_token.js";
-import Profile from "./profile.js";
-import Contact from "./contact.js";
+import category from "./categories.js";
+import subCategory from "./subcategories.js";
+import menu from "./menus.js";
+import outlet from "./outlets.js";
+import AccessToken from "./accesstoken.js";
+import Profile from "./profiles.js";
+import Contact from "./contacts.js";
+import Gallery from "./galleries.js";
+import Event from "./events.js";
+import Tables from "./tables.js";
+import Transactions from "./transactions.js";
+import Orders from "./orders.js";
 
 const accessToken = db.define("access_token", AccessToken, {
-  tableName: "access_tokens",
+  tableName: "accessTokens",
 });
 const categoryControl = db.define("category", category, {
   tableName: "categories",
@@ -22,6 +27,15 @@ const profileControl = db.define("profile", Profile, { tableName: "profiles" });
 const contactControl = db.define("contact", Contact, {
   tableName: "contacts",
 });
+const galleryControl = db.define("gallery", Gallery, {
+  tableName: "galleries",
+});
+const eventControl = db.define("event", Event, { tableName: "events" });
+const tableControl = db.define("table", Tables, { tableName: "tables" });
+const transactionControl = db.define("transaction", Transactions, {
+  tableName: "transactions",
+});
+const orderControl = db.define("order", Orders, { tableName: "orders" });
 
 outletControl.hasMany(accessToken, {
   foreignKey: "id_outlet",
@@ -49,6 +63,26 @@ outletControl.hasMany(contactControl, {
   onUpdate: "CASCADE",
 });
 contactControl.belongsTo(outletControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+outletControl.hasMany(galleryControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+galleryControl.belongsTo(outletControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+outletControl.hasMany(eventControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+eventControl.belongsTo(outletControl, {
   foreignKey: "id_outlet",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
@@ -86,6 +120,56 @@ menuControl.belongsTo(subCategoryControl, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+outletControl.hasMany(tableControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+tableControl.belongsTo(outletControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+tableControl.hasMany(transactionControl, {
+  foreignKey: "id_table",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+transactionControl.belongsTo(tableControl, {
+  foreignKey: "id_table",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+transactionControl.hasMany(orderControl, {
+  foreignKey: "id_transaction",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+orderControl.belongsTo(transactionControl, {
+  foreignKey: "id_transaction",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+menuControl.hasMany(orderControl, {
+  foreignKey: "id_menu",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+orderControl.belongsTo(menuControl, {
+  foreignKey: "id_menu",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+outletControl.hasMany(orderControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+orderControl.belongsTo(outletControl, {
+  foreignKey: "id_outlet",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
 
 export {
   categoryControl,
@@ -95,4 +179,9 @@ export {
   accessToken,
   profileControl,
   contactControl,
+  galleryControl,
+  eventControl,
+  tableControl,
+  transactionControl,
+  orderControl,
 };

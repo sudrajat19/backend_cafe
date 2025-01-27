@@ -1,21 +1,31 @@
 import express from "express";
 import loginRoute from "../middleware/login.js";
 import outletRoute from "./routerOutlet.js";
+import galleryRoute from "./routerGallery.js";
+import eventRoute from "./routerEvent.js";
 import categoryRoute from "./routerCategory.js";
 import subCategoryRoute from "./routerSubCategory.js";
 import menuRoute from "./routerMenu.js";
 import profileRoute from "./routerProfile.js";
 import contactRoute from "./routerContact.js";
+import tableRoute from "./routerTable.js";
+import transactionRoute from "./routerTransaction.js";
+import orderRoute from "./routerOrder.js";
 import { refreshAccessToken } from "../middleware/verifikasi.js";
 
 const app = express();
 app.use("/api/v1/login", loginRoute);
 app.use("/api/v1/refresh-token/:refreshToken", refreshAccessToken);
 app.use("/api/v1/outlet", outletRoute);
+app.use("/api/v1/gallery", galleryRoute);
+app.use("/api/v1/event", eventRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/subcategory", subCategoryRoute);
 app.use("/api/v1/menu", menuRoute);
 app.use("/api/v1/profile", profileRoute);
 app.use("/api/v1/contact", contactRoute);
+app.use("/api/v1/table", tableRoute);
+app.use("/api/v1/transaction", transactionRoute);
+app.use("/api/v1/order", orderRoute);
 
 export default app;
