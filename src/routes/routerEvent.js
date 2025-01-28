@@ -6,11 +6,13 @@ import {
   deleteEvent,
   getEvent,
   getEventById,
+  getPaginatedEvent,
   updateEvent,
 } from "../controller/eventController.js";
 
 const router = express.Router();
 
+router.get("/showpaginated", getPaginatedEvent);
 router.get("/show", getEvent);
 router.get("/show/:id", getEventById);
 router.post("/create", upload.single("photo"), createEvent);

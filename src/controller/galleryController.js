@@ -1,5 +1,46 @@
+import { Op } from "sequelize";
 import { galleryControl, outletControl } from "../models/index.js";
 import { deleteFile } from "../validations/fileValidations.js";
+
+export const getPaginatedGallery = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  try {
+    const { count, rows } = await galleryControl.findAndCountAll({
+      include: [
+        {
+          model: outletControl,
+          attributes: ["outlet_name"],
+          where: {
+            outlet_name: {
+              [Op.like]: `%${search}%`,
+            },
+          },
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      gallery: rows || [],
+    });
+  } catch (error) {
+    console.error("Error fetching gallery:", error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while fetching gallery." });
+  }
+};
 
 export const getGallery = async (req, res) => {
   try {

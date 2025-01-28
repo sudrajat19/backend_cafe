@@ -1,5 +1,43 @@
-import { eventControl } from "../models/index.js";
+import { Op } from "sequelize";
+import { eventControl, outletControl } from "../models/index.js";
 
+export const getPaginatedEvent = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  try {
+    const { count, rows } = await eventControl.findAndCountAll({
+      include: [
+        {
+          model: outletControl,
+          attributes: ["outlet_name"],
+          where: {
+            outlet_name: {
+              [Op.like]: `%${search}%`,
+            },
+          },
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: page,
+      event: rows || [],
+    });
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    res.status(500).send({ error: "An error occurred while fetching event." });
+  }
+};
 export const getEvent = async (req, res) => {
   try {
     const data = await eventControl.findAll();

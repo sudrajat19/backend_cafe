@@ -1,7 +1,11 @@
 import express from "express";
 import Router from "./src/routes/index.js";
 import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
 import morgan from "morgan";
+import { updateTransactions } from "./src/controller/transactionController.js";
+const app = express();
 const port = 3010;
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -21,7 +25,6 @@ app.use(
     credentials: true,
   })
 );
-const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -36,10 +39,11 @@ app.use(express.static("public"));
 io.on("connection", (socket) => {
   // console.log("Connected to server:", socket.id);
 
-  socket.on("directOrder", async (msg) => {
-    // console.log("Received order:", msg);
+  socket.on("directOrder", async (ord) => {
+    // console.log("Received order:", ord);
     try {
-      io.emit("directOrder", msg);
+      await updateTransactions(ord);
+      io.emit("directOrder", ord);
     } catch (error) {
       console.error("Error saving order:", error);
     }

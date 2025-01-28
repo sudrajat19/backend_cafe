@@ -42,6 +42,36 @@ export const createTransaction = async (req, res) => {
   }
 };
 
+export const updateTransactions = async (ord) => {
+  try {
+    const Transaction = await transactionControl.findByPk(ord.id);
+    if (!Transaction) {
+      return res.status(404).json({
+        message: "Transaction not found",
+      });
+    }
+
+    await transactionControl.update(
+      {
+        id_table: ord.table,
+        status: ord.status,
+        pays_method: ord.pays_method,
+        total_pay: ord.total_pay,
+        note: ord.note,
+      },
+      { where: { id: ord.id } }
+    );
+
+    res.status(200).json({
+      message: "Success to change Transaction",
+    });
+  } catch (err) {
+    res.status(400).send({
+      message: "Failed to change Transaction",
+      error: err.message,
+    });
+  }
+};
 export const updateTransaction = async (req, res) => {
   const id = req.params.id;
   const { id_table, status, pays_method, total_pay, note } = req.body;
