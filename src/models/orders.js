@@ -8,10 +8,6 @@ const Orders = {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  id_outlet: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
   qty: {
     type: Sequelize.INTEGER,
     allowNull: false,

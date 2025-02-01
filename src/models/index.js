@@ -160,12 +160,12 @@ orderControl.belongsTo(menuControl, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-outletControl.hasMany(orderControl, {
+outletControl.hasMany(transactionControl, {
   foreignKey: "id_outlet",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-orderControl.belongsTo(outletControl, {
+transactionControl.belongsTo(outletControl, {
   foreignKey: "id_outlet",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",

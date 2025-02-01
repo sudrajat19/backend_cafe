@@ -4,6 +4,10 @@ const Transactions = {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  id_outlet: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   status: {
     type: Sequelize.STRING,
     allowNull: true,

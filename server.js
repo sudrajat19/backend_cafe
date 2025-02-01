@@ -4,9 +4,9 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import morgan from "morgan";
-import { updateTransactions } from "./src/controller/transactionController.js";
+import { createTransactions } from "./src/controller/transactionController.js";
 const app = express();
-const port = 3010;
+const port = 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -37,16 +37,17 @@ app.use(Router);
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
-  // console.log("Connected to server:", socket.id);
+  console.log("User connected:", socket.id);
 
-  socket.on("directOrder", async (ord) => {
-    // console.log("Received order:", ord);
-    try {
-      await updateTransactions(ord);
-      io.emit("directOrder", ord);
-    } catch (error) {
-      console.error("Error saving order:", error);
-    }
+  socket.on("joinCafe", (id_outlet) => {
+    socket.join(`cafe_${id_outlet}`);
+    console.log(`User ${socket.id} joined cafe_${id_outlet}`);
+  });
+
+  socket.on("order", async ({ id_outlet, orderData }) => {
+    console.log(`Pesanan diterima untuk cafe_${id_outlet}:`, orderData);
+    await createTransactions(id_outlet, orderData);
+    io.to(`cafe_${id_outlet}`).emit("newOrder", orderData);
   });
 
   socket.on("disconnect", () => {
@@ -57,7 +58,6 @@ app.post("/example", (req, res) => {
   console.log(req.body, "cek data");
   res.json(req.body);
 });
-
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`running on port ${port}`);
 });
