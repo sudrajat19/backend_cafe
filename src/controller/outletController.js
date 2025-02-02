@@ -1,4 +1,4 @@
-import { QueryTypes } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import sequelize from "../db/config/db.js";
 import {
   contactControl,
@@ -53,7 +53,7 @@ export const getPaginatedOutlet = async (req, res) => {
       totalItems: count,
       totalPages,
       currentPage: page,
-      subcategory: rows || [],
+      outlet: rows || [],
     });
   } catch (error) {
     console.error("Error fetching profile:", error);

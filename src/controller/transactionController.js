@@ -1,7 +1,9 @@
 import { Op } from "sequelize";
 import {
+  menuControl,
   orderControl,
   outletControl,
+  tableControl,
   transactionControl,
 } from "../models/index.js";
 
@@ -22,6 +24,17 @@ export const getPaginatedTransaction = async (req, res) => {
               [Op.like]: `%${search}%`,
             },
           },
+        },
+        {
+          model: orderControl,
+          include: [
+            {
+              model: menuControl,
+            },
+          ],
+        },
+        {
+          model: tableControl,
         },
       ],
       limit,
